@@ -1,0 +1,22 @@
+%% a)
+% N = 10000;
+% y = repmat([1 0], N, 1) + sqrt(0.1)*rand(ndist([0;0], eye(2)), N);
+% xhat = atan2(y(:,2), y(:,1));
+% mse = mean(xhat.^2)
+%% b)
+N = 10000;
+y0 = sqrt(0.1)*rand(ndist([0;0], eye(2)), N);
+y1 = y0 + repmat([1 0], N, 1);
+T0 = sum(y0.^2, 2);
+T1 = sum(y1.^2, 2);
+T0 = sort(T0);
+T1 = sort(T1);
+h = 1:N-1;
+PFA = 1:N-1;
+PD = 1:N-1;
+for k=1:N-1
+    h(k) = T0(end-k);
+    PFA(k)=k/N;
+    PD(k)=length(find(T1>h(k)))/N;
+end
+plot(PFA, PD);

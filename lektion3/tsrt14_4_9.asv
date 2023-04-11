@@ -1,0 +1,23 @@
+s1 = exsensor('toa', 8);
+s1.th = [1,1, -1,-1, 1,-1, -1,1, 0.5,0.5, -0.5,-0.5, 0.5,-0.5, -0.5,0.5];
+s1.x0 = [0,0];
+s1.pe = 0.1*eye(8);
+y1 = simulate(s1, 10)
+plot(s1)
+
+s2 = exsensor('toa', 8);
+s2.th = [1,1, -1,-1, 1,-1, -1,1, 0.5,0.5, -0.5,-0.5, 0.5,-0.5, -0.5,0.5];
+s2.x0 = [0.1,0.1];
+s2.pe = 0.3*eye(8);
+y2 = simulate(s2, 10)
+
+xls1 = ls(s1, y1);
+xwls1 = wls(s1, y1);
+xls2 = ls(s2, y2);
+xwls2 = wls(s2, y2);
+
+xplot2(xls1,xwls1,'conf',90)
+% xplot2(xls2, xwls2, 'conf', 90)
+
+crlb1 = crlb(s1, y1)
+crlb2 = crlb(s2, y2)

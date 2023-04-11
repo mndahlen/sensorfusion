@@ -1,0 +1,15 @@
+a = 1;
+b = -2;
+c = 3;
+N = 1000;
+y = a + b*log(1:N + c)
+
+cg = 0:0.1:5;
+
+for 
+
+sm = sensormod('x(1) + x(2)*log(1 + x(3))',[3,0,1,0]);
+sm.pe=0;
+sm.x0 = [1,-2,3];
+y=simulate(sm,1:10)
+

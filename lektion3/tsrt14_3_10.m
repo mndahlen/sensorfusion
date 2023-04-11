@@ -1,0 +1,20 @@
+clear
+sm=exsensor('toa',4);
+sm.x0=[0,0];
+sm.th=[1, 1, -1, -1, 1, -1, -1, 1];
+sm.pe=0.01*eye(4);
+% plot(sm);
+sm;
+
+y=simulate(sm,1)
+grid = (-2:0.1:2);
+% lh2(sm,y, grid, grid)
+% plot(sm);
+xls = ls(sm, y)
+xwls = wls(sm, y)
+xnls = estimate(sm, y, 'thmask', zeros(8,1))
+
+xplot2(xls, xwls, 'conf', 90)
+plot(xnls, 'conf', 90)
+
+crlb(sm, y)
