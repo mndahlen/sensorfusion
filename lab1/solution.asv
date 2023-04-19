@@ -1,5 +1,4 @@
 clear
-close all
 %% Setup
 % Speed of sound
 c = 343;
@@ -81,52 +80,12 @@ S2_2.th = P2;
 S2_2.fs = 2;
 
 %% Configuration analysis
-if 0
-    resolution = 0.1;
-    xlow=-4;
-    xhigh=4;
-    
-    % Config 1
-    figure()
-    y = simulate(S1_1,0);
-    plot(S1_1)
-    hold on;
-    lh2(S1_1,y,(xlow:resolution:xhigh),(xlow:resolution:xhigh))
-    axis([xlow,xhigh,xlow,xhigh])
-    crlb(S1_1,y)
-    view([-90,90])
-    
-    % Config 2
-    figure()
-    y = simulate(S1_2,0);
-    plot(S1_2)
-    hold on;
-    lh2(S1_2,y,(xlow:resolution:xhigh),(xlow:resolution:xhigh))
-    axis([xlow,xhigh,xlow,xhigh])
-    crlb(S1_2,y)
-    view([-90,90])
-end
-% Config 1 is better
-
-%% Localization
-if 0
-    % I will do a and d
-    
-    % Remove sensor bias
-    tphat_data = tphat_data - sensor_bias;
-    % config 1
-    tphat_data = tphat_data(1:4,:)
-    
-    % a)
-    sigobj = sig(tphat_data);
-    sigobj.fs = 2;
-    
-    
-    % b)
-    y_permute = [-1 1 0 0; 
-                 -1 0 1 0; 
-                 -1 0 0 1];
-    tphat_data_p = y_permute*tphat_data
-    sigobj = sig(tphat_data_l);
-    sigobj.fs = 2;
-end
+figure()
+y = simulate(S1,0);
+xhat = estimate(smConfig1,y,'thmask',zeros(smConfig1.nn(4),1));
+plot(smConfig1),hold on;
+lh2(smConfig1,y,(-10:1:132)./100,(-10:1:110)./100)
+plot(xhat,'conf',90)
+axis([-10,132,-10,110]./100)
+crlb(smConfig1,y)
+saveFigures = 1
