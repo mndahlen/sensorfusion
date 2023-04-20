@@ -198,4 +198,10 @@ if 1
 end
 
 %% Tracking
+load estimates_d.mat
 estimates_a
+
+cv2d = exmotion('cv2d');
+ctcv2d = exmotion('ctcv2d');
+
+residual_cv2d = S1_1.addsensor()
