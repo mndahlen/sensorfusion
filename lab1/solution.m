@@ -240,9 +240,10 @@ end
 
 % Motion model 1
 if 1
-    z = sig(y_reference_tdoa');
-    z.fs=2;
-    z.Py = reference_PE1.P;
+    z = sig(y_reference_tdoa', 2);
+    z.t = z.t + 1;
+    %z.fs=2;
+%     z.Py = reference_PE1.P;
     S_reference_1_cv2d = addsensor(cv2d, S_reference_1);
     S_reference_1_cv2d.x0 = [1,1,1,1]';
     [x,V] = ekf(S_reference_1_cv2d, z)
