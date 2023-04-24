@@ -254,34 +254,18 @@ if 0
 end
 
 % Motion model 2
-if 0
+if 1
     z = sig(y_reference_tdoa', 2);
     z.t = z.t + 1;
     z.fs=2;
     z.Py = reference_PE1.P;
     S_reference_1_ctcv2d = addsensor(ctcv2d, S_reference_1);
-    S_reference_1_ctcv2d.x0 = [1,1,1,1,0]';
-    [x_ekf_reference_1_ctcv2d,V] = ekf(S_reference_1_ctcv2d, z);
-    xplot2(x_ekf_reference_1_ctcv2d, 'conf', 90);
+    S_reference_1_ctcv2d.x0 = [1,1,1,1]';
+    [x_ekf_reference_1_cv2d,V] = ekf(S_reference_1_cv2d, z);
+    xplot2(x_ekf_reference_1_cv2d, 'conf', 90);
     view([-90 90])
     saveas(gcf, "figs/tracking_ekf_motion_2_2","epsc");
     saveas(gcf, "figs/tracking_ekf_motion_2_2","png");
 end
 %% 7 Uncertainty
 % How much can I perturb before really bad (maximum dist)
-for i = [1:10]
-    i
-    z = sig(y_reference_tdoa', 2);
-    z.t = z.t + 1;
-    z.fs=2;
-    z.Py = reference_PE1.P;
-    S_reference_1_perturbed = S_reference_1;
-    S_reference_1_perturbed.th(1) = S_reference_1_perturbed.th(1) + i
-    S_reference_1_ctcv2d = addsensor(ctcv2d, S_reference_1_perturbed);
-    S_reference_1_ctcv2d.x0 = [1,1,1,1,0]';
-    [x_ekf_reference_1_ctcv2d,V] = ekf(S_reference_1_ctcv2d, z);
-    xplot2(x_ekf_reference_1_ctcv2d, 'conf', 90);
-    view([-90 90])
-    saveas(gcf, ['figs/disturb_' num2str(i)],"epsc");
-    saveas(gcf, ['figs/disturb_' num2str(i)],"png");
-end
