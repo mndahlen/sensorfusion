@@ -1,9 +1,0 @@
-function [x, P] = tu_qw(x, P, omega, T, Rw)
-    I = eye(size(Rw));
-    S_q = Sq(x);
-    S_omega = Somega(omega*I + Rw);
-    
-    x = (I + 0.5*S_omega*T)*x + 0.5*T*S_q*Rw
-
-end
-
