@@ -1,4 +1,4 @@
-function [xhat, meas] = filterTemplate(fname, calAcc, calGyr, calMag)
+function [xhat, meas] = checkpoint2_EKF(fname, calAcc, calGyr, calMag)
 % FILTERTEMPLATE  Filter template
 %
 % This is a template function for how to collect and filter data
@@ -127,9 +127,13 @@ function [xhat, meas] = filterTemplate(fname, calAcc, calGyr, calMag)
     if ~any(isnan(mag))  % Mag measurements are available.
       % Do something
     end
+    
+    % time update
+    [x, P] = tu_qw_1(x, P, gyr, 0.01, calGyr.R);
 
-    orientation = data(1, 18:21)';  % Google's orientation estimate.
-
+    % Google's orientation estimate.
+    orientation = data(1, 18:21)';  
+   
     % Visualize result
     if t >= tnextdisp
       tnextdisp = t + 1/DISPLAY_FREQ;  % Next vizualization update
