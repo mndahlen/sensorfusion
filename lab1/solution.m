@@ -57,12 +57,14 @@ reference_PE2 = ndist(b_2, reference_R2);
 
 %% Plot histograms
 % Histfit (can put into subplot later)
-% for i = 1:8
-%     fig = histfit(calibration_deviation(i,:));
-%     title("Noise histogram for sensor", num2str(i));
-%     filename = "figs/noise_sensor_" + num2str(i) + ".png";
-%     saveas(gcf, filename);
-% end
+if 0
+    for i = 1:8
+        fig = histfit(calibration_deviation(i,:));
+    %     title("Noise histogram for sensor", num2str(i));
+        filename = "figs/noise_sensor_" + num2str(i) + ".png";
+        saveas(gcf, filename);
+    end
+end
 
 %% Sensor models
 S_reference_1 = sensormod(@reference_tdoa, [2,0,3,8]);
@@ -87,7 +89,7 @@ S_r0_2.th = P2;
 S_r0_2.fs = 2;
 
 %% Configuration analysis
-if 0
+if 1
     resolution = 0.1;
     xlow=-4;
     xhigh=4;
@@ -102,7 +104,7 @@ if 0
         plot(S_reference_1)
         hold on;
         axis([xlow,xhigh,xlow,xhigh])
-        crlb(S_reference_1,y)
+        crlb2(S_reference_1, [], [xlow:.1:xhigh], [xlow:.1:xhigh], [1 2], 'rmse')
         view([-90,90]);
         ax = gca;
         ax.FontSize = 16; 
@@ -143,13 +145,13 @@ if 0
     % Config 2
     y = simulate(S_reference_2,0);
     % Plot config 2 setup and CRLB
-    if 0
+    if 1
         figure()
 %         lh2(S_reference_2,y,(xlow:resolution:xhigh),(xlow:resolution:xhigh));
         plot(S_reference_2)
         hold on
         axis([xlow,xhigh,xlow,xhigh])
-        crlb(S_reference_2,y)
+        crlb2(S_reference_2, [], [xlow:.1:xhigh], [xlow:.1:xhigh], [1 2], 'rmse')
         view([-90,90]);
         ax = gca;
         ax.FontSize = 16; 
