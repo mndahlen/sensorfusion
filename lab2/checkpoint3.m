@@ -1,3 +1,6 @@
+%% Q: OUTLIER REJECTION HOW USE ORIENTATION VIEW?
+
+
 if 0
     load saved/acc_mean.mat
     load saved/acc_cov.mat
@@ -13,17 +16,17 @@ if 0
     calMag.m = mag_mean;
     calMag.R = mag_cov;
     
-    [xhat, meas] = checkpoint2_EKF('', calAcc, calGyr, calMag)
+    [xhat, meas] = checkpoint3_EKF('', calAcc, calGyr, calMag)
     
-    save saved/xhat_checkpoint_2_side xhat 
-    save saved/meas_checkpoint_2_side meas
+    save saved/xhat_checkpoint_3_side_outlier xhat 
+    save saved/meas_checkpoint_3_side_outlier meas
 end
 
 % FLAT
-if 1
+if 0
     % Estimates vs Google baseline - Flat start
-    load saved/xhat_checkpoint_2_flat.mat
-    load saved/meas_checkpoint_2_flat.mat
+    load saved/xhat_checkpoint_3_flat.mat
+    load saved/meas_checkpoint_3_flat.mat
     meas_size = size(meas.t)
     idxs = 2:meas_size(2) 
     fig = figure();
@@ -40,12 +43,12 @@ if 1
     title("Estimates vs Google - Flat")
     xlabel("t [s]")
     ylabel("values")
-    saveas(gcf, "figs/checkpoint_2_flat_estimate.png");
+    saveas(gcf, "figs/checkpoint_3_flat_estimate.png");
     hold off
     
     % Error Estimates vs Google baseline - Flat start
-    load saved/xhat_checkpoint_2_flat.mat
-    load saved/meas_checkpoint_2_flat.mat
+    load saved/xhat_checkpoint_3_flat.mat
+    load saved/meas_checkpoint_3_flat.mat
     meas_size = size(meas.t)
     idxs = 2:meas_size(2) 
     fig = figure();
@@ -58,15 +61,15 @@ if 1
     title("Error - Flat")
     xlabel("t [s]")
     ylabel("values")
-    saveas(gcf, "figs/checkpoint_2_flat_error.png");
+    saveas(gcf, "figs/checkpoint_3_flat_error.png");
     hold off
 end
 
 % SIDE
 if 0
     % Estimates vs Google baseline - Side start
-    load saved/xhat_checkpoint_2_side.mat
-    load saved/meas_checkpoint_2_side.mat
+    load saved/xhat_checkpoint_3_side.mat
+    load saved/meas_checkpoint_3_side.mat
     meas_size = size(meas.t)
     idxs = 2:meas_size(2) 
     fig = figure();
@@ -83,12 +86,12 @@ if 0
     title("Estimates vs Google - Side")
     xlabel("t [s]")
     ylabel("values")
-    saveas(gcf, "figs/checkpoint_2_side_estimate.png");
+    saveas(gcf, "figs/checkpoint_3_side_estimate.png");
     hold off
     
     % Error Estimates vs Google baseline - Side start
-    load saved/xhat_checkpoint_2_side.mat
-    load saved/meas_checkpoint_2_side.mat
+    load saved/xhat_checkpoint_3_side.mat
+    load saved/meas_checkpoint_3_side.mat
     meas_size = size(meas.t)
     idxs = 2:meas_size(2) 
     fig = figure();
@@ -101,6 +104,6 @@ if 0
     title("Error - Side")
     xlabel("t [s]")
     ylabel("values")
-    saveas(gcf, "figs/checkpoint_2_side_error.png");
+    saveas(gcf, "figs/checkpoint_3_side_error.png");
     hold off
 end

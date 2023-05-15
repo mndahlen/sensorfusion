@@ -55,6 +55,7 @@ function [xhat, meas] = checkpoint2_EKF(fname, calAcc, calGyr, calMag)
   x = [1; 0; 0; 0];
   P = eye(nx, nx);
   prev_gyr = [0,0,0]';
+  prev_acc = [0,0,-calAcc.m(3)]';
 
   % Saved filter states.
   xhat = struct('t', zeros(1, 0),...
@@ -105,38 +106,53 @@ function [xhat, meas] = checkpoint2_EKF(fname, calAcc, calGyr, calMag)
     % in 100Hz).
     data = server.getNext(5);
 
-    if isnan(data(1))  % No new data received
+    if isnan(data(1))  
+      % No new data received
       continue;
     end
-    t = data(1)/1000;  % Extract current time
+    % Extract current time
+    t = data(1)/1000;  
 
-    if isempty(t0)  % Initialize t0
+    % Initialize t0
+    if isempty(t0)  
       t0 = t;
     end
-
+    
+    % Gyroscope 
     gyr = data(1, 5:7)';
-    if ~any(isnan(gyr))  % Gyro measurements are available.
+    if ~any(isnan(gyr)) 
+        % Gyro measurements are available.
         gyr;
     else
         gyr = prev_gyr;
     end
     prev_gyr = gyr;
-
+    
+    % Accelerometer
     acc = data(1, 2:4)';
-    if ~any(isnan(acc))  % Acc measurements are available.
-      % Do something
+    if ~any(isnan(acc))  
+        % Acc measurements are available.
+        % Outlier Rejection
+        ownView.outlier_acc
+        % Measurement Update
+        [x, P] = mu_g(x, P, acc, calAcc.R, [0,0,calAcc.m(3)]');
+    else
+        acc = prev_acc;
     end
-
+    prev_acc = acc;
+    
+    % Magnetometer
     mag = data(1, 8:10)';
-    if ~any(isnan(mag))  % Mag measurements are available.
-      % Do something
+    if ~any(isnan(mag))
+        % Mag measurements are available.
+        % Do something
     end
     
-    % time update
+    % Time update
     [x, P] = tu_qw_1(x, P, gyr, 0.01, calGyr.R);
     % Normalize
-    [x, P] = mu_normalizeQ(x, P)
-    
+    [x, P] = mu_normalizeQ(x, P);
+
     % Google's orientation estimate.
     orientation = data(1, 18:21)';  
    

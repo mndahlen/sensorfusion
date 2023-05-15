@@ -1,8 +1,8 @@
 % [xhat, meas] = filterTemplate()
 % 
-% save meas_checkpoint_1 meas
+% save saved/meas_checkpoint_1 meas
 
-load meas_checkpoint_1.mat
+load saved/meas_checkpoint_1.mat
 
 %% Histogram of all measurements (acc, gyr, mag)
 if 0
@@ -75,12 +75,12 @@ if 1
     mag_mean = mean(meas.mag(:, ~any(isnan(meas.mag), 1)), 2)
     mag_cov = cov((meas.mag(:, ~any(isnan(meas.mag), 1)))')
 
-    save acc_mean acc_mean
-    save acc_cov acc_cov
-    save gyr_mean gyr_mean
-    save gyr_cov gyr_cov
-    save mag_mean mag_mean
-    save mag_cov mag_cov
+    save saved/acc_mean acc_mean
+    save saved/acc_cov acc_cov
+    save saved/gyr_mean gyr_mean
+    save saved/gyr_cov gyr_cov
+    save saved/mag_mean mag_mean
+    save saved/mag_cov mag_cov
 end
 
 %% Trends of all measurements
