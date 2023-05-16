@@ -14,6 +14,7 @@ function [xhat, meas] = checkpoint2_EKF(fname, calAcc, calGyr, calMag)
   P = eye(nx, nx);
   prev_gyr = [0,0,0]';
   prev_acc = [0,0,-calAcc.m(3)]';
+  prev_mag = calMag.m;
 
   % Saved filter states.
   xhat = struct('t', zeros(1, 0),...
@@ -91,9 +92,9 @@ function [xhat, meas] = checkpoint2_EKF(fname, calAcc, calGyr, calMag)
     if ~any(isnan(acc))  
         % Acc measurements are available.
         % Outlier Rejection (Assuming dominated by g)
-        gaussian_exponent = abs((acc(3)-calAcc.m(3))^2/calAcc.R(3,3))
+        gaussian_exponent = (acc(3)-calAcc.m(3))^2/calAcc.R(3,3);
         if gaussian_exponent > 5e5
-            ownView.setAccDist(1)
+            ownView.setAccDist(1);
         else
             ownView.setAccDist(0)
             [x, P] = mu_g(x, P, acc, calAcc.R, [0,0,calAcc.m(3)]');
@@ -108,8 +109,19 @@ function [xhat, meas] = checkpoint2_EKF(fname, calAcc, calGyr, calMag)
     mag = data(1, 8:10)';
     if ~any(isnan(mag))
         % Mag measurements are available.
-        % Do something
+        % Outlier Rejection (Assuming dominated by g)
+        gaussian_exponent = (mag-calMag.m)'*inv(calMag.R)*(mag-calMag.m);
+        if gaussian_exponent > 1e7
+            ownView.setMagDist(1);
+        else
+            [x, P] = mu_m(x, P, mag, calMag.R, [0,sqrt(calMag.m(1)^2+calMag.m(2)^2),calMag.m(3)]');
+            ownView.setMagDist(0)
+        end
+        % Measurement Update
+    else
+        mag = prev_mag;
     end
+    prev_mag = mag;
     
     % Time update
     [x, P] = tu_qw_1(x, P, gyr, 0.01, calGyr.R);

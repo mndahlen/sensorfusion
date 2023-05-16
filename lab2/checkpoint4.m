@@ -1,5 +1,7 @@
-%% Q: OUTLIER REJECTION HOW USE ORIENTATION VIEW?
-%% A: Just for displaying that we detected outlier (only interesting w setAccDist and setMagDist on or off).
+% Remove gyroscope?
+% Mag MU floating around?
+% Outlier rejection: Use mean? (Turn off in phone)
+% Outlier rejection: Do nothing (?) Do not perform the MU.
 
 if 0
     load saved/acc_mean.mat
@@ -16,17 +18,17 @@ if 0
     calMag.m = mag_mean;
     calMag.R = mag_cov;
     
-    [xhat, meas] = checkpoint3_EKF('', calAcc, calGyr, calMag)
+    [xhat, meas] = checkpoint4_EKF('', calAcc, calGyr, calMag)
     
-    save saved/xhat_checkpoint_3_flat xhat 
-    save saved/meas_checkpoint_3_flat meas
+    save saved/xhat_checkpoint_4_side xhat 
+    save saved/meas_checkpoint_4_side meas
 end
 
 % FLAT
 if 0
     % Estimates vs Google baseline - Flat start
-    load saved/xhat_checkpoint_3_flat.mat
-    load saved/meas_checkpoint_3_flat.mat
+    load saved/xhat_checkpoint_4_flat.mat
+    load saved/meas_checkpoint_4_flat.mat
     meas_size = size(meas.t)
     idxs = 2:meas_size(2) 
     fig = figure();
@@ -43,12 +45,12 @@ if 0
     title("Estimates vs Google - Flat")
     xlabel("t [s]")
     ylabel("values")
-    saveas(gcf, "figs/checkpoint_3_flat_estimate.png");
+    saveas(gcf, "figs/checkpoint_4_flat_estimate.png");
     hold off
     
     % Error Estimates vs Google baseline - Flat start
-    load saved/xhat_checkpoint_3_flat.mat
-    load saved/meas_checkpoint_3_flat.mat
+    load saved/xhat_checkpoint_4_flat.mat
+    load saved/meas_checkpoint_4_flat.mat
     meas_size = size(meas.t)
     idxs = 2:meas_size(2) 
     fig = figure();
@@ -61,15 +63,15 @@ if 0
     title("Error - Flat")
     xlabel("t [s]")
     ylabel("values")
-    saveas(gcf, "figs/checkpoint_3_flat_error.png");
+    saveas(gcf, "figs/checkpoint_4_flat_error.png");
     hold off
 end
 
 % SIDE
 if 0
     % Estimates vs Google baseline - Side start
-    load saved/xhat_checkpoint_3_side.mat
-    load saved/meas_checkpoint_3_side.mat
+    load saved/xhat_checkpoint_4_side.mat
+    load saved/meas_checkpoint_4_side.mat
     meas_size = size(meas.t)
     idxs = 2:meas_size(2) 
     fig = figure();
@@ -86,12 +88,12 @@ if 0
     title("Estimates vs Google - Side")
     xlabel("t [s]")
     ylabel("values")
-    saveas(gcf, "figs/checkpoint_3_side_estimate.png");
+    saveas(gcf, "figs/checkpoint_4_side_estimate.png");
     hold off
     
     % Error Estimates vs Google baseline - Side start
-    load saved/xhat_checkpoint_3_side.mat
-    load saved/meas_checkpoint_3_side.mat
+    load saved/xhat_checkpoint_4_side.mat
+    load saved/meas_checkpoint_4_side.mat
     meas_size = size(meas.t)
     idxs = 2:meas_size(2) 
     fig = figure();
@@ -104,15 +106,15 @@ if 0
     title("Error - Side")
     xlabel("t [s]")
     ylabel("values")
-    saveas(gcf, "figs/checkpoint_3_side_error.png");
+    saveas(gcf, "figs/checkpoint_4_side_error.png");
     hold off
 end
 
 % FLAT outlier
-if 0
+if 1
     % Estimates vs Google baseline - Flat start
-    load saved/xhat_checkpoint_3_flat_outlier.mat
-    load saved/meas_checkpoint_3_flat_outlier.mat
+    load saved/xhat_checkpoint_4_flat_outlier.mat
+    load saved/meas_checkpoint_4_flat_outlier.mat
     meas_size = size(meas.t)
     idxs = 2:meas_size(2) 
     fig = figure();
@@ -129,12 +131,12 @@ if 0
     title("Estimates vs Google - Flat")
     xlabel("t [s]")
     ylabel("values")
-    saveas(gcf, "figs/checkpoint_3_flat_estimate_outlier.png");
+    saveas(gcf, "figs/checkpoint_4_flat_estimate_outlier.png");
     hold off
     
     % Error Estimates vs Google baseline - Flat start
-    load saved/xhat_checkpoint_3_flat_outlier.mat
-    load saved/meas_checkpoint_3_flat_outlier.mat
+    load saved/xhat_checkpoint_4_flat_outlier.mat
+    load saved/meas_checkpoint_4_flat_outlier.mat
     meas_size = size(meas.t)
     idxs = 2:meas_size(2) 
     fig = figure();
@@ -147,15 +149,15 @@ if 0
     title("Error - Flat")
     xlabel("t [s]")
     ylabel("values")
-    saveas(gcf, "figs/checkpoint_3_flat_error_outlier.png");
+    saveas(gcf, "figs/checkpoint_4_flat_error_outlier.png");
     hold off
 end
 
 % SIDE outlier
-if 1
+if 0
     % Estimates vs Google baseline - Side start
-    load saved/xhat_checkpoint_3_side_outlier.mat
-    load saved/meas_checkpoint_3_side_outlier.mat
+    load saved/xhat_checkpoint_4_side_outlier.mat
+    load saved/meas_checkpoint_4_side_outlier.mat
     meas_size = size(meas.t)
     idxs = 2:meas_size(2) 
     fig = figure();
@@ -172,12 +174,12 @@ if 1
     title("Estimates vs Google - Side")
     xlabel("t [s]")
     ylabel("values")
-    saveas(gcf, "figs/checkpoint_3_side_estimate_outlier.png");
+    saveas(gcf, "figs/checkpoint_4_side_estimate_outlier.png");
     hold off
     
     % Error Estimates vs Google baseline - Side start
-    load saved/xhat_checkpoint_3_side_outlier.mat
-    load saved/meas_checkpoint_3_side_outlier.mat
+    load saved/xhat_checkpoint_4_side_outlier.mat
+    load saved/meas_checkpoint_4_side_outlier.mat
     meas_size = size(meas.t)
     idxs = 2:meas_size(2) 
     fig = figure();
@@ -190,6 +192,6 @@ if 1
     title("Error - Side")
     xlabel("t [s]")
     ylabel("values")
-    saveas(gcf, "figs/checkpoint_3_side_error_outlier.png");
+    saveas(gcf, "figs/checkpoint_4_side_error_outlier.png");
     hold off
 end
