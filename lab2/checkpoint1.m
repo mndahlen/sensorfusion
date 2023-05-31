@@ -1,8 +1,9 @@
-% [xhat, meas] = filterTemplate()
+[xhat, meas] = filterTemplate()
 % 
-% save saved/meas_checkpoint_1 meas
+save saved/meas_checkpoint_1 meas
+save saved/xhat_checkpoint_1 xhat
 
-load saved/meas_checkpoint_1.mat
+% load saved/meas_checkpoint_1.mat
 
 %% Histogram of all measurements (acc, gyr, mag)
 if 0
@@ -62,7 +63,7 @@ if 0
 end
 
 %% Mean and variance of all measurements
-if 1
+if 0
     % acc
     acc_mean = mean(meas.acc(:, ~any(isnan(meas.acc), 1)), 2)
     acc_cov = cov((meas.acc(:, ~any(isnan(meas.acc), 1)))')

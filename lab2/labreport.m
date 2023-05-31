@@ -4,129 +4,202 @@
 %
 %% *Group members:*
 %
-% # NN1 (YYMMDD-NNNN), LiU-ID
-% # NN2 (YYMMDD-NNNN), LiU-ID
+% # Martin Dahl (981223-2677), marda545
 %
 %% _Usage_
 % _This file is intended to be a template for reporting the results on lab
-% 2. Use the function names as indicated in the preparatory lab work (these
-% are included at appropriate places), and copy filterTempate.m into
-% ekfFilter.m before starting to make your changes (it will be included at
-% the end of the report for reference)._
-%
-% _There is no need to be talkative when answering the questions, assume
-% that the person reading the report has read the lab instructions. The
-% purpose is to show that you have been able to observe and experience the
-% important aspects of the lab and do not miss out on anything important._
-%
-% _Use the different cells in this file to collect data for the plots you
-% are asked for in each steps of the lab. Running the cells interactively
-% will collect a dataset, which is then saved in |DATAFILE.mat|. The
-% collection of datasets are then extracted when publishing this file,
-% to make a report you can hand in._
-%
-% _Before publishing, remove any and all text in italic (lines starting and
-% ending with an underscore (_)) to minimize the report length. Make sure to
-% publish to pdf._
 
-if inpublish  % Load saved data when publishing.
-  load DATAFILE
-end
-
-
-%% 1. Connect the phone with your lab computer
-% *No need to document this step.*
+% if inpublish  % Load saved data when publishing.
+%   load DATAFILE
+% end
 
 %% 2. Get to know your data
-% *Shortly describe your observations?*
+% The accelerometer has a component from the earth gravitational field
+% which is constantly around 9.82.
+% The magnetometer reacts somewhat to movement and almost always has non
+% zero values
+% The gyroscope measurements are 0 if the phone is not moving. 
 
-if ~inpublish  % Don't recollect data during publish
-  [xhat2, meas2] = ekfFilter();
-  save DATAFILE -append xhat2 meas2
-end
+% if ~inpublish  % Don't recollect data during publish
+%   [xhat2, meas2] = ekfFilter();
+%   save DATAFILE -append xhat2 meas2
+% end
 %%
-
-% _Put your code to visualize the data here_
-
 %%
 % *Result*
-%
-% * _A histogram of the measurements for each sensor and axis._
-% * _A plot of the signals over time. If there are trends figure out a way
-% to deal with these._
-% * _The determined average acceleration vector, angular velocity vector,
-% and magnetic field, and their respective covariance matrices._
+if 0
+    % acc 1
+    fig = histfit(meas.acc(1, ~any(isnan(meas.acc), 1)));
+    title("acc axis 1");
+    filename = "figs/acc_1.png";
+    saveas(gcf, filename);
+    
+    % acc 2
+    fig = histfit(meas.acc(2, ~any(isnan(meas.acc), 1)));
+    title("acc axis 2");
+    filename = "figs/acc_2.png";
+    saveas(gcf, filename);
+    
+    % acc 3
+    fig = histfit(meas.acc(3, ~any(isnan(meas.acc), 1)));
+    title("acc axis 3");
+    filename = "figs/acc_3.png";
+    saveas(gcf, filename);
+    
+    % gyr 1
+    fig = histfit(meas.gyr(1, ~any(isnan(meas.gyr), 1)));
+    title("gyr axis 1");
+    filename = "figs/gyr_1.png";
+    saveas(gcf, filename);
+    
+    % gyr 2
+    fig = histfit(meas.gyr(2, ~any(isnan(meas.gyr), 1)));
+    title("gyr axis 2");
+    filename = "figs/gyr_2.png";
+    saveas(gcf, filename);
+    
+    % gyr 3
+    fig = histfit(meas.gyr(3, ~any(isnan(meas.gyr), 1)));
+    title("gyr axis 3");
+    filename = "figs/gyr_3.png";
+    saveas(gcf, filename);
+    
+    % mag 1
+    fig = histfit(meas.mag(1, ~any(isnan(meas.mag), 1)));
+    title("mag axis 1");
+    filename = "figs/mag_1.png";
+    saveas(gcf, filename);
+    
+    % mag 2
+    fig = histfit(meas.mag(2, ~any(isnan(meas.mag), 1)));
+    title("mag axis 2");
+    filename = "figs/mag_2.png";
+    saveas(gcf, filename);
+    
+    % mag 3
+    fig = histfit(meas.mag(3, ~any(isnan(meas.mag), 1)));
+    title("mag axis 3");
+    filename = "figs/mag_3.png";
+    saveas(gcf, filename);
+end
+
+if 0
+    fig = plot(meas.t(:,~any(isnan(meas.acc), 1)), meas.acc(:, ~any(isnan(meas.acc), 1)));
+    title("Acceleration");
+    filename = "figs/acc_plot.png";
+    saveas(gcf, filename);
+    
+    fig = plot(meas.t(:,~any(isnan(meas.gyr), 1)), meas.gyr(:, ~any(isnan(meas.gyr), 1)));
+    title("Gyroscope");
+    filename = "figs/gyr_plot.png";
+    saveas(gcf, filename);
+    
+    fig = plot(meas.t(:,~any(isnan(meas.mag), 1)), meas.mag(:, ~any(isnan(meas.mag), 1)));
+    title("Magnetometer");
+    filename = "figs/mag_plot.png";
+    saveas(gcf, filename);
+end
+
 
 %% 3. Add the EKF time update step
 % _*Include your time update function* from the
-% preparations here:_
-%
-% _For simplicity, use the same function for the case with and without gyro
-% support and differentiate the two, eg, by checking for empty gyro input._
+% preparations here:
+function [x, P] = tu_qw(x, P, omega, T, Rw)
+    S_q = Sq(x);
+    S_omega = Somega(omega);
+    I = eye(size(S_omega));
+
+    F = (I + 0.5*S_omega*T);
+    G = 0.5*T*S_q;
+    Q = Rw;
+    
+    x = F*x;
+    P = F*P*(F') + G*Q*(G');
+end
 %
 % <include>tu_qw.m</include>
 %
 %%
-% _*Motivate parameter choices:*_
+% Time update is based on measurement, so we use the measurement noise
+% covariance.
 %
 %%
 % *Result*
 %
 % _Run the indicated code below to generate results to plot._
-if ~inpublish  % Don't recollect data during publish
-  [xhat3, meas3] = ekfFilter();
-  save DATAFILE -append xhat3 meas3
-end
+% if ~inpublish  % Don't recollect data during publish
+%   [xhat3, meas3] = ekfFilter();
+%   save DATAFILE -append xhat3 meas3
+% end
 %%
-figure
-visDiff(xhat3, meas3);
+if 0
+    figure
+    visDiff(xhat3, meas3);
+end
+
 %%
 % *_Shortly describe your observations:_*
-%
-% * _What has gyroscope measurements added?_
-% * _What is the difference between starting the program with the phone flat
-%   on the desk and in a random pose?  Why?_
+% The phone reacts very well to time update using gyroscope measurements.
+% We now measure angular velocity which can be used for time update.
+% Furthermore, the gyroscope helps the phone know if it is static or not.
+% When we start flat we start from the calibration point. When we don't we
+% start from something unexpected. We have not linearized around this
+% point.
 
 %% 4. Add the EKF accelerometer measurement update step
-% _*Include your accelerometer measurement update function* from the
-% preparations here:_
+function [x, P] = mu_g(x, P, yacc, Ra, g0)
+    Q = Qq(x);
+    [dQ0, dQ1, dQ2, dQ3] = dQqdq(x);
+    H = (Q')*g0; 
+    dH = [dQ0'*g0, dQ1'*g0, dQ2'*g0, dQ3'*g0]; % Seems to drift?
+
+    S = Ra + dH*P*(dH');
+    K = P*(dH')*S^(-1);
+    eps = yacc - H;
+
+    x = x + K*eps;
+    P = P - P*(dH')*S^(-1)*dH*P;
+end
 %
 % <include>mu_g.m</include>
 %
 %%
-% _*Motivate parameter choices:*_
+% We include the acceleration measurement covariance and g0 (mean of
+% acceleration where we assumate gravitation dominates).
+
+%% Note: USe [0,0,g0] and subtract the estimated error in component 1 and 2 form measurements
 %
 %%
 % *Result*
-%
-% _Run the indicated code below to generate results to plot._
-if ~inpublish  % Don't recollect data during publish
-  [xhat4, meas4] = ekfFilter();
-  save DATAFILE -append xhat4 meas4
+% if ~inpublish  % Don't recollect data during publish
+%   [xhat4, meas4] = ekfFilter();
+%   save DATAFILE -append xhat4 meas4
+% end
+%%
+if 0
+    figure
+    visDiff(xhat4, meas4);
 end
 %%
-figure
-visDiff(xhat4, meas4);
-%%
-% _*Shortly describe your observations:*_
-%
-% * _What has the accelerometer added?_
-% * _What happens when you shake or quickly slide the phone on a surface?
-%   Why?_
-%
+% Ability to update measurement with acceleration, for which we can use
+% gravity and this is useful if the phone gets lost in orientation. If we
+% shake it heavily we deviate from the point of linearization too quickly. 
+% It's difficult to observe the effect of sliding the phone on a surface.
 
 %% 5. Add accelerometer outlier rejection
-% _*Describe your accelerometer outlier rejection:*_
-%
-% * _What is considered an outlier?_
-% * _What do you do when you encounter an outlier?_
-%
+% We assume accelerations follow a gaussian. If the gaussian PDF exponent
+% value is above a threshold we say its an outlier. If we find an outlier
+% we simply ignore the measurment and don't perform the measurement update.
 %%
-% _*How did you implement the outlier rejection?*_
-%%
-%
-%   % _Write code to clarify here._
-%
+if 0
+    gaussian_exponent = (acc(3)-calAcc.m(3))^2/calAcc.R(3,3);
+    if gaussian_exponent > 5e5
+        ownView.setAccDist(1);
+    else
+        ownView.setAccDist(0)
+        [x, P] = mu_g(x, P, acc, calAcc.R, [0,0,calAcc.m(3)]');
+    end
+end
 %%
 % *Result*
 %
@@ -136,22 +209,40 @@ if ~inpublish  % Don't recollect data during publish
   save DATAFILE -append xhat5 meas5
 end
 %%
-figure
-visDiff(xhat5, meas5);
+if 0
+    figure
+    visDiff(xhat5, meas5);
+end
 %%
 % _*Shortly describe your observations:*_
 %
 % * _What happens when you shake or quickly slide the phone on surface?
 %   Why?_
+%% NOTE: Should be an outlier since we are not expected external forces
+% 
 
 %% 6. Add the EKF magnetometer measurement update step
 % _*Include your magnetometer measurement update function* from the
 % preparations here:_
-%
+function [x, P] = mu_m(x, P, ymag, Rm, m0)
+    Q = Qq(x);
+    [dQ0, dQ1, dQ2, dQ3] = dQqdq(x);
+    H = (Q')*m0; 
+    dH = [dQ0'*m0, dQ1'*m0, dQ2'*m0, dQ3'*m0];
+
+    S = Rm + dH*P*(dH');
+    K = P*(dH')*S^(-1); % (S\eye(length(S))
+    eps = ymag - H;
+
+    x = x + K*eps;
+    P = P - P*(dH')*S^(-1)*dH*P;
+end
+
 % <include>mu_m.m</include>
 %
 %%
 % _*Motivate parameter choices:*_
+% Like before
 %
 %
 %%
@@ -163,70 +254,71 @@ if ~inpublish  % Don't recollect data during publish
   save DATAFILE -append xhat6 meas6
 end
 %%
-figure
-visDiff(xhat6, meas6);
+if 0 
+    figure
+    visDiff(xhat6, meas6);
+end
 %%
 % _*Shortly describe your observations:*_
-%
-% * _What has the magnetometer added?_
-% * _What happens when you put the phone close to a magnet?  (Use a
-%   refridgerator magnet, or hold the phone close to, eg, the keyboard
-%   which is usually magnetic.)  Why?_
+% We can now get back to our actual orientation since the earth magnetic
+% field is static, however, its not as good as using gravitation. 
+% But the magnetic field is in another axis than gravitation. If the
+% phone is clsoe to a magnet it flips out, so we need some outlier
+% rejection.
+%% Note: Compared to accelerometer with g wwe now have constant component in all axes
 
 %% 7. Add magnetometer outlier rejection
-% _*Describe your magnetometer outlier rejection:*_
-%
-% * _What is considered an outlier?_
-% * _What do you do when you encounter an outlier?_
-%
+% Similar to accelerometer outlier rejection we assume a gaussian
+% distribution and check for too high PDF exponent values. We use a
+% threshold to determine if something is an outlier. If we find something
+% to be an outlier we ignore the measurement and don't perform the
+% measurement update using the measurement.
 %%
-% _*How did you implement the outlier rejection?*_
-%%
-%
-%   % _Write code to clarify here._
+if 0
+    gaussian_exponent = (mag-calMag.m)'*inv(calMag.R)*(mag-calMag.m);
+    if gaussian_exponent > 1e7
+        ownView.setMagDist(1);
+    else
+        [x, P] = mu_m(x, P, mag, calMag.R, [0,sqrt(calMag.m(1)^2+calMag.m(2)^2),calMag.m(3)]');
+        ownView.setMagDist(0)
+    end
+end
 %
 %%
 % *Result*
 %
-% _Run the indicated code below to generate results to plot.  Save the
-% resulting matrices in a mat-file, just in case you have to restart matlab
-% before compiling the report._
-if ~inpublish  % Don't recollect data during publish
-  [xhat7, meas7] = ekfFilter();
-  save DATAFILE -append xhat7 meas7
+% if ~inpublish  % Don't recollect data during publish
+%   [xhat7, meas7] = ekfFilter();
+%   save DATAFILE -append xhat7 meas7
+% end
+%%
+if 0
+    figure
+    visDiff(xhat7, meas7);
 end
 %%
-figure
-visDiff(xhat7, meas7);
-%%
-% _*Shortly describe your observations:*_
-%
-% * _What happens when you put the phone close to a magnet?  Why?_
+% When we have outlier rejection it no longer flips out close a magnet. It
+% is more stable.
 
 %% 8. Test your filter without gyroscope measurements
-% _The easiest way to do this is to run your full filter implementation and
-% switch gyro measurements on and off in the app._
-%
 %%
 % *Result*
 %
-% _Run the indicated code below to generate results to plot._
-if ~inpublish  % Don't recollect data during publish
-  [xhat8, meas8] = ekfFilter();
-  save DATAFILE -append xhat8 meas8
+% if ~inpublish  % Don't recollect data during publish
+%   [xhat8, meas8] = ekfFilter();
+%   save DATAFILE -append xhat8 meas8
+% end
+if 0
+    figure
+    visDiff(xhat8, meas8);
 end
-figure
-visDiff(xhat8, meas8);
 %%
-% _*Shortly describe your observations:*_
-%
-% * _How does the behavor differ when using and not the gyroscope?_
-% * _Some phones has no gyroscope, to reduce the production cost and
-%   preserve battery.  How does that affect their ability to estimate
-%   orientation?_
+% It moves very slowly and does not react strongly to the phone rotating.
+% The orientation now has to be found using only measurement updates which
+% takes more time. If the model for other measurements are better then we
+% could potentially use the time update on another measurement.
+%% Note: Increase process noise to increase sensitivity using only MU.
 
-%% 9. If you are interested and have time
-% _No need to report back if you did this, but feel free if you did._
 
 %% APPENDIX: Main loop
 %

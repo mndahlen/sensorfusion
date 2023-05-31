@@ -3,7 +3,7 @@
 % Outlier rejection: Use mean? (Turn off in phone)
 % Outlier rejection: Do nothing (?) Do not perform the MU.
 
-if 0
+if 1
     load saved/acc_mean.mat
     load saved/acc_cov.mat
     load saved/gyr_mean.mat
@@ -111,7 +111,7 @@ if 0
 end
 
 % FLAT outlier
-if 1
+if 0
     % Estimates vs Google baseline - Flat start
     load saved/xhat_checkpoint_4_flat_outlier.mat
     load saved/meas_checkpoint_4_flat_outlier.mat
